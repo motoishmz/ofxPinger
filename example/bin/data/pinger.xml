@@ -16,6 +16,6 @@
 
 <!-- global settings -->
 <settings>
+	<ping_address>/ofxPinger</ping_address> <!-- /{ping_address}/loadbang- will be sent when OF app launched -->
 	<ping_interval_ms>1000</ping_interval_ms>
-	<ping_address>/ofxPinger</ping_address>
 </settings>
