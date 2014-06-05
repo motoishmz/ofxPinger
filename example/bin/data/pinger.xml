@@ -1,0 +1,21 @@
+<!-- destinations -->
+<destinations>
+	<dest>
+		<host>localhost</host>
+		<port>10000</port>
+	</dest>
+	<dest>
+		<host>localhost</host>
+		<port>10001</port>
+	</dest>
+	<dest>
+		<host>127.0.0.1</host>
+		<port>10002</port>
+	</dest>
+</destinations>
+
+<!-- global settings -->
+<settings>
+	<ping_interval_ms>1000</ping_interval_ms>
+	<ping_address>/ofxPinger</ping_address>
+</settings>
