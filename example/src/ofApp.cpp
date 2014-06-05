@@ -4,8 +4,6 @@
 class ofApp : public ofBaseApp
 {
 	
-	//! you don't need to do anything in your code except making an instance.
-	//! you can manage all of the settings concerning messaging in data/pinger.xml
 	ofxPinger pinger;
 	
 public:
@@ -15,6 +13,8 @@ public:
 		ofSetFrameRate(60);
 		ofSetVerticalSync(true);
 		ofBackground(0, 3, 30);
+		
+		pinger.setup("pinger.xml");
 	}
 	
 	void update()
@@ -42,6 +42,11 @@ public:
 			report << "host:" << pinger.dests[i]->host << endl;
 			report << "port:" << pinger.dests[i]->port;
 			ofDrawBitmapStringHighlight(report.str(), 20+150*i, 20, ofColor::limeGreen);
+		}
+		
+		if (pinger.dests.empty())
+		{
+			ofDrawBitmapStringHighlight("no destination found, make sure your .xml is valid." , 20, 20, ofColor::red);
 		}
 	}
 };

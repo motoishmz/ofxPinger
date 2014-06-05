@@ -5,8 +5,6 @@
 class ofxPinger
 {
 	
-	const string filepath = "pinger.xml";
-	
 public:
 	
 	typedef struct
@@ -39,11 +37,27 @@ public:
 	
 	
 	ofxPinger()
-	: last_timestamp(0.0f)
+	: last_ping_timestamp(0.0f)
 	{
+		ofAddListener(ofEvents().update, this, &ofxPinger::update);
+	}
+	
+	virtual ~ofxPinger()
+	{
+		for (auto d: dests)
+			delete d;
+		
+		ofRemoveListener(ofEvents().update, this, &ofxPinger::update);
+		ofLogNotice("ofxPinger") << "stoped pinging, bye.";
+	}
+	
+	void setup(string filepath = "pinger.xml")
+	{
+		setting_filepath = filepath;
 		
 		ofxXmlSettings XML;
-		XML.load(filepath);
+		XML.load(setting_filepath);
+		
 		
 		//! global settings
 		ping_interval_ms = XML.getValue("settings:ping_interval_ms", 1000);
@@ -51,6 +65,7 @@ public:
 		
 		
 		//! destinations
+		stringstream report;
 		XML.pushTag("destinations");
 		{
 			const int num_dests = XML.getNumTags("dest");
@@ -63,37 +78,41 @@ public:
 				destination *d = new destination();
 				d->setup(host, port);
 				dests.push_back(d);
+				
+				report << "[destination " << i << "] " << endl;
+				report << "host: " << host << endl;
+				report << "port: " << port << endl;
+				report << endl;
 			}
+			
+			if (num_dests > 0)
+				ofLogNotice("ofxPinger") << "started pinging to " << num_dests << " destinations." << endl << report.str();
+			else
+				ofLogError("ofxPinger") << "couldn't load destinations from " << setting_filepath;
 		}
 		XML.popTag();
 		
 		
-		//! event hooks
-		ofAddListener(ofEvents().setup, this, &ofxPinger::setup);
-		ofAddListener(ofEvents().update, this, &ofxPinger::update);
-		ofAddListener(ofEvents().exit, this, &ofxPinger::exit);
+		//! loadbang
+		for (auto d: dests)
+			d->bang(ping_address+"/loadbang");
 	}
 	
 	inline float getPingInterval() const { return ping_interval_ms; }
 	inline string getPingAddress() const { return ping_address; }
-	inline string getFilePath() const { return filepath; }
+	inline string getFilePath() const { return setting_filepath; }
 	
 	
 protected:
 	
-	float last_timestamp;
+	float last_ping_timestamp;
 	float ping_interval_ms;
 	string ping_address;
+	string setting_filepath;
 	
 	bool shouldSendMessage() const
 	{
-		return (ofGetElapsedTimeMillis() - last_timestamp) > ping_interval_ms;
-	}
-	
-	void setup(ofEventArgs &e)
-	{
-		for (auto d: dests)
-			d->bang(ping_address+"/loadbang");
+		return (ofGetElapsedTimeMillis() - last_ping_timestamp) > ping_interval_ms;
 	}
 	
 	void update(ofEventArgs &e)
@@ -103,13 +122,7 @@ protected:
 			for (auto d: dests)
 				d->bang(ping_address);
 			
-			last_timestamp = ofGetElapsedTimeMillis();
+			last_ping_timestamp = ofGetElapsedTimeMillis();
 		}
-	}
-	
-	void exit(ofEventArgs &e)
-	{
-		for (auto d: dests)
-			delete d;
 	}
 };
