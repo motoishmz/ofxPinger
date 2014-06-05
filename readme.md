@@ -1,4 +1,6 @@
-# ofxPinger is a simple wrapper of ofxOscSender which sends a periodic osc message for telling other apps that OF is working.
+#  ･゜･*:.｡..:*･'｡. .｡.:*･゜･*
+
+ofxPinger is a simple wrapper of ofxOscSender which sends a periodic osc message for telling other apps that OF is working.
 
 ![image](https://raw.githubusercontent.com/motoishmz/ofxPinger/master/ofxaddons_thumbnail.png)
 
