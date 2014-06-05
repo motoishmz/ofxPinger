@@ -4,6 +4,8 @@
 class ofApp : public ofBaseApp
 {
 	
+	//! you don't need to do anything in your code except making an instance.
+	//! you can manage all of the settings concerning messaging in data/pinger.xml
 	ofxPinger pinger;
 	
 public:
