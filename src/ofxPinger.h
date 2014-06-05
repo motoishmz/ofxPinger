@@ -69,6 +69,7 @@ public:
 		
 		
 		//! event hooks
+		ofAddListener(ofEvents().setup, this, &ofxPinger::setup);
 		ofAddListener(ofEvents().update, this, &ofxPinger::update);
 		ofAddListener(ofEvents().exit, this, &ofxPinger::exit);
 	}
@@ -87,6 +88,12 @@ protected:
 	bool shouldSendMessage() const
 	{
 		return (ofGetElapsedTimeMillis() - last_timestamp) > ping_interval_ms;
+	}
+	
+	void setup(ofEventArgs &e)
+	{
+		for (auto d: dests)
+			d->bang(ping_address+"/loadbang");
 	}
 	
 	void update(ofEventArgs &e)
